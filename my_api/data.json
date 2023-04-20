@@ -1,0 +1,17 @@
+{
+    "Estudiantes":[
+    {
+        "id":1,
+        "name":"Ricardo Zapata",
+        "level":"Septimo",
+        "country":"Venezuela",
+        "birth_year": 1998
+    },{
+        "id":2,
+        "name":"Alexandra Hurtado",
+        "level":"Once",
+        "country":"Colombia",
+        "birth_year": 2001 
+        }
+    ]
+}
