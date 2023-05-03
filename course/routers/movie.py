@@ -23,7 +23,7 @@ def get_movies() -> List[Movie]:
 @movie_router.get('/movies/{id}', tags=['Movies'], response_model=Movie,status_code=200)
 def get_id(id: int = Path(ge=1)) -> Movie:
     db = Sesion()
-    result = MovieService(db).get_movies(id)
+    result = MovieService(db).get_movie(id)
     if not result:
          return JSONResponse(status_code=404, content={'message':f'La pelicula con el id: {id} no existe'})
     return JSONResponse(content=jsonable_encoder(result))
@@ -42,29 +42,23 @@ def get_movies_by_category(category:str = Query(min_length=1)) -> List[Movie]:
 @movie_router.post('/movies',tags=['Movies'], response_model=dict,status_code=201)
 def create_movies(movie: Movie) -> dict:
     db = Sesion()
-    MovieService(db).create_movies(movie)
+    MovieService(db).create_movie(movie)
     return JSONResponse(status_code=201, content={'message':'Se ha registrado la película'}) 
 
 @movie_router.put('/movies/{id}', tags=['Movies'], response_model=dict,status_code=200)
 def update_movie(id:int, movie:Movie) -> dict:
     db = Sesion()
-    result = db.query(MovieModel).filter(MovieModel.id == id).first()
+    result = MovieService(db).get_movie(id)
     if not result:
         return JSONResponse(status_code=404, content={'message':f'La pelicula con el id: {id} no existe'})
-    result.title = movie.title
-    result.overview = movie.overview
-    result.year = movie.year
-    result.rating = movie.rating
-    result.category = movie.category
-    db.commit()
+    MovieService(db).update_movie(id,movie)
     return JSONResponse(status_code=200,content={'message':f'Se ha modificado la película con id: {id}'})
         
 @movie_router.delete('/movies/{id}', tags=['Movies'], response_model=dict,status_code=200)
 def delete_movie(id:int) -> dict:
     db = Sesion()
-    result = db.query(MovieModel).filter(MovieModel.id == id).first()
+    result = MovieService(db).get_movie(id)
     if not result:
         return JSONResponse(status_code=404, content={'message':f'La pelicula con el id: {id} no existe'})
-    db.delete(result)
-    db.commit()
+    MovieService(db).delete_movie(id)
     return JSONResponse(status_code=200,content={'message':f'Se ha eliminado la película con id: {id}'})   
